@@ -1,0 +1,91 @@
+syntax = "proto3";
+
+package user;
+
+// biz/model
+option go_package = "hertz/packet";
+
+import "api.proto";
+
+enum Code {
+  Success = 0;
+  ParamInvalid = 1;
+  DBErr = 2;
+}
+
+message Packet{
+  int64 ID = 1;
+  string Region = 2;
+  string Name = 3;
+  string Channel = 4;
+  string Uploader = 5;
+  string Time = 6;
+}
+
+message CreatePacketReq{
+  int64 ID = 1 [(api.body) = "id", (api.form) = "id", (api.vd) = "$>0 && $<500"];
+  string Region = 2 [(api.body) = "region", (api.form) = "region", (api.vd) = "(len($) > 0 && len($) < 20)"];
+  string Name = 3 [(api.body) = "name", (api.form) = "name", (api.vd) = "(len($) > 0 && len($) < 20)"];
+  string Channel = 4 [(api.body) = "channel", (api.form) = "channel", (api.vd) = "(len($) > 0 && len($) < 20)"];
+  string Uploader = 5 [(api.body) = "uploader", (api.form) = "uploader", (api.vd) = "(len($) > 0 && len($) < 20)"];
+  string Time = 6 [(api.body) = "time", (api.form) = "time", (api.vd) = "(len($) > 0 && len($) < 20)"];
+}
+
+message CreatePacketResp{
+  Code Code = 1;
+  string Msg = 2;
+}
+
+message QueryPacketsReq{
+  string Time = 1 [(api.body) = "time", (api.form) = "time", (api.vd) = "len($)>0"];
+  string Account = 2 [(api.body) = "account", (api.form) = "account", (api.vd) = "len($)>0 && len($)<20"];
+}
+
+message QueryPacketsResp{
+  Code Code = 1;
+  string Msg = 2;
+  repeated Packet Packet = 3;
+  int64 Total = 4;
+}
+
+//message DeleteUserReq{
+//  int64 UserID = 1 [(api.path) = "user_id", (api.vd) = "$>0"];
+//}
+//
+//message DeleteUserResp{
+//  Code Code = 1;
+//  string Msg = 2;
+//}
+//
+//message UpdateUserReq{
+//  int64 UserID = 1 [(api.path) = "user_id", (api.vd) = "$>0"];
+//  string Name = 2 [(api.body) = "name", (api.form) = "name", (api.vd) = "(len($) > 0 && len($) < 100)"];
+//  Gender Gender = 3 [(api.body) = "gender", (api.form) = "gender", (api.vd) = "($ == 1||$ == 2)"];
+//  int64 Age = 4 [(api.body) = "age", (api.form) = "age", (api.vd) = "$>0"];
+//  string Introduce = 5 [(api.body) = "introduce", (api.form) = "introduce", (api.vd) = "(len($) > 0 && len($) < 1000)"];
+//}
+//
+//message UpdateUserResp{
+//  Code Code = 1;
+//  string Msg = 2;
+//}
+//
+//message OtherResp {
+//  string Msg = 1;
+//}
+
+
+service PacketService {
+  rpc CreatePacketResponse(CreatePacketReq) returns(CreatePacketResp) {
+    option (api.post) = "/v1/user/create";
+  }
+  rpc QueryPacketResponse(QueryPacketsReq) returns(QueryPacketsResp){
+    option (api.post) = "/v1/user/query";
+  }
+//  rpc UpdateUserResponse(UpdateUserReq) returns(UpdateUserResp){
+//    option (api.post) = "/v1/user/update/:user_id";
+//  }
+//  rpc DeleteUserResponse(DeleteUserReq) returns(DeleteUserResp){
+//    option (api.post) = "/v1/user/delete/:user_id";
+//  }
+}
