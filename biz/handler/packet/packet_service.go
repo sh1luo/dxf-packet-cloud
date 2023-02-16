@@ -28,6 +28,7 @@ func CreatePacketResponse(ctx context.Context, c *app.RequestContext) {
 		ID:       req.ID,
 		Region:   req.Region,
 		Name:     req.Name,
+		Content:  req.Content,
 		Channel:  req.Channel,
 		Uploader: req.Uploader,
 		Time:     req.Time,
@@ -45,7 +46,7 @@ func CreatePacketResponse(ctx context.Context, c *app.RequestContext) {
 }
 
 // QueryPacketResponse .
-// @router /v1/user/query [POST]
+// @router /v1/packet/query [POST]
 func QueryPacketResponse(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req packet.QueryPacketsReq

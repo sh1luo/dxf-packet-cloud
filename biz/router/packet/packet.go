@@ -20,9 +20,9 @@ func Register(r *server.Hertz) {
 	{
 		_v1 := root.Group("/v1", _v1Mw()...)
 		{
-			_user := _v1.Group("/user", _userMw()...)
-			_user.POST("/create", append(_createpacketresponseMw(), packet.CreatePacketResponse)...)
-			_user.POST("/query", append(_querypacketresponseMw(), packet.QueryPacketResponse)...)
+			_packet := _v1.Group("/packet", _packetMw()...)
+			_packet.POST("/create", append(_createpacketresponseMw(), packet.CreatePacketResponse)...)
+			_packet.POST("/query", append(_querypacketresponseMw(), packet.QueryPacketResponse)...)
 		}
 	}
 }

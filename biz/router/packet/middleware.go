@@ -30,3 +30,8 @@ func _querypacketresponseMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }
+
+func _packetMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
