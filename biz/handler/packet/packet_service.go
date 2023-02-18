@@ -34,6 +34,11 @@ func CreatePacketResponse(ctx context.Context, c *app.RequestContext) {
 		Time:     req.Time,
 	}
 	model.Mu.Lock()
+	if len(model.Packets) > 0 {
+		p.ID = model.Packets[len(model.Packets)-1].ID + 1
+	} else {
+		p.ID = 1
+	}
 	model.Packets = append(model.Packets, p)
 	err = model.SaveFile()
 	if err != nil {
