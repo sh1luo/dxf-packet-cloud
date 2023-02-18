@@ -27,7 +27,7 @@ message CreatePacketReq{
   int64 ID = 1 [(api.body) = "id", (api.form) = "id", (api.vd) = "$>0 && $<500"];
   string Region = 2 [(api.body) = "region", (api.form) = "region", (api.vd) = "(len($) > 0 && len($) < 30)"];
   string Name = 3 [(api.body) = "name", (api.form) = "name", (api.vd) = "(len($) > 0 && len($) < 30)"];
-  string Content = 4 [(api.body) = "content", (api.form) = "content", (api.vd) = "(len($) > 0 && len($) < 2000)"];
+  string Content = 4 [(api.body) = "content", (api.form) = "content", (api.vd) = "(len($) > 0 && len($) < 3000)"];
   string Channel = 5 [(api.body) = "channel", (api.form) = "channel", (api.vd) = "(len($) > 0 && len($) < 20)"];
   string Uploader = 6 [(api.body) = "uploader", (api.form) = "uploader", (api.vd) = "(len($) > 0 && len($) < 30)"];
   string Time = 7 [(api.body) = "time", (api.form) = "time", (api.vd) = "(len($) > 0 && len($) < 30)"];
