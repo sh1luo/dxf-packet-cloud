@@ -4,10 +4,9 @@ package packet
 
 import (
 	"context"
-	"packet_cloud/biz/model"
-
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
+	"packet_cloud/biz/model"
 	packet "packet_cloud/biz/model/hertz/packet"
 )
 
@@ -63,6 +62,7 @@ func QueryPacketResponse(ctx context.Context, c *app.RequestContext) {
 
 	resp := new(packet.QueryPacketsResp)
 
+	model.ReadFile()
 	model.Mu.RLock()
 	resp.Packet = model.Packets
 	model.Mu.RUnlock()

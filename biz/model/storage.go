@@ -14,15 +14,20 @@ var (
 
 func ReadFile() error {
 	// 判断当前周是否存在文件，如果不存在则创建
-	if Packets == nil {
-		bs, err := ioutil.ReadFile("./packets")
-		if err != nil {
-			return err
-		}
-		err = json.Unmarshal(bs, &Packets)
-		if err != nil {
-			return err
-		}
+	bs, err := ioutil.ReadFile("./packets")
+	if err != nil {
+		return err
+	}
+	p := make([]*packet.Packet, 0)
+	err = json.Unmarshal(bs, &p)
+	if err != nil {
+		return err
+	}
+
+	if len(p) > 0 {
+		Mu.Lock()
+		Packets = p
+		Mu.Unlock()
 	}
 
 	return nil
