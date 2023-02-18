@@ -35,3 +35,5 @@ _testmain.go
 *.local.yml
 dumped_hertz_remote_config.json
 		  
+packet_cloud
+go_build_packet_cloud

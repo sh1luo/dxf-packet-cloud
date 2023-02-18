@@ -7,57 +7,88 @@ option go_package = "hertz/packet";
 
 import "api.proto";
 
-enum Code {
-  Success = 0;
-  ParamInvalid = 1;
-  DBErr = 2;
+message UserPacket{
+  int32 id = 1;
+  string name = 2;
+  string content = 3;
+  int32 size = 4;
+  string send_timing = 5;
 }
 
-message Packet{
-  int64 ID = 1;
-  string Region = 2;
-  string Name = 3;
-  string Content = 4;
-  string Channel = 5;
-  string Uploader = 6;
-  string Time = 7;
+message CloudPacket{
+  int32 id = 1;
+  string region = 2 ;
+  string name = 3 ;
+  string channel = 4 ;
+  string uploader = 5 ;
+  string time = 6;
+
+  repeated UserPacket user_packets = 7;
 }
 
-message CreatePacketReq{
-  int64 ID = 1 [(api.body) = "id", (api.form) = "id", (api.vd) = "$>0 && $<500"];
-  string Region = 2 [(api.body) = "region", (api.form) = "region", (api.vd) = "(len($) > 0 && len($) < 30)"];
-  string Name = 3 [(api.body) = "name", (api.form) = "name", (api.vd) = "(len($) > 0 && len($) < 30)"];
-  string Content = 4 [(api.body) = "content", (api.form) = "content", (api.vd) = "(len($) > 0 && len($) < 2000)"];
-  string Channel = 5 [(api.body) = "channel", (api.form) = "channel", (api.vd) = "(len($) > 0 && len($) < 20)"];
-  string Uploader = 6 [(api.body) = "uploader", (api.form) = "uploader", (api.vd) = "(len($) > 0 && len($) < 30)"];
-  string Time = 7 [(api.body) = "time", (api.form) = "time", (api.vd) = "(len($) > 0 && len($) < 30)"];
+message UploadPacketReq{
+  CloudPacket cloud_packet = 1;
 }
 
-message CreatePacketResp{
-  Code Code = 1;
-  string Msg = 2;
+message UploadPacketResp{
+  int32 code = 1;
+  string msg = 2;
 }
 
-message QueryPacketsReq{
-  string Time = 1 [(api.body) = "time", (api.form) = "time", (api.vd) = "len($)>0"];
-  string Account = 2 [(api.body) = "account", (api.form) = "account", (api.vd) = "len($)>0 && len($)<20"];
+message ListPacketReq{
+  string time = 1;
+  string username = 2;
 }
 
-message QueryPacketsResp{
-  Code Code = 1;
-  string Msg = 2;
-  repeated Packet Packet = 3;
-  int64 Total = 4;
+message ListPacketResp{
+  int32 code = 1;
+  string msg = 2;
+  repeated CloudPacket cloud_packets = 3;
 }
 
-//message DeleteUserReq{
-//  int64 UserID = 1 [(api.path) = "user_id", (api.vd) = "$>0"];
-//}
-//
-//message DeleteUserResp{
-//  Code Code = 1;
-//  string Msg = 2;
-//}
+message GetPacketByIDReq{
+  string time = 1;
+  string username = 2;
+  int32 id = 3;
+}
+
+message GetPacketByIDResp{
+  int32 code = 1;
+  string msg = 2;
+  //repeated UserPacket user_packets = 3;
+  string user_packets = 3;
+}
+
+message DeletePacketReq{
+  int32 from = 1;
+  int32 to = 2;
+}
+
+message DeletePacketResp{
+  int32 code = 1;
+  string msg = 2;
+}
+
+message MCloudPacket{
+  int32 id = 1;
+  string region = 2 ;
+  string name = 3 ;
+  repeated string channel = 4 ;
+  string uploader = 5 ;
+  string time = 6;
+
+  repeated UserPacket user_packets = 7;
+}
+
+message MUploadAllChannelsPacketReq{
+  MCloudPacket mcloud_packet = 1;
+}
+
+message MUploadAllChannelsPacketResp{
+  int32 code = 1;
+  string msg = 2;
+}
+
 //
 //message UpdateUserReq{
 //  int64 UserID = 1 [(api.path) = "user_id", (api.vd) = "$>0"];
@@ -68,7 +99,7 @@ message QueryPacketsResp{
 //}
 //
 //message UpdateUserResp{
-//  Code Code = 1;
+//  int32 int32 = 1;
 //  string Msg = 2;
 //}
 //
@@ -78,16 +109,22 @@ message QueryPacketsResp{
 
 
 service PacketService {
-  rpc CreatePacketResponse(CreatePacketReq) returns(CreatePacketResp) {
-    option (api.post) = "/v1/packet/create";
+  rpc UploadPacket(UploadPacketReq) returns(UploadPacketResp) {
+    option (api.post) = "/v1/packet/upload";
   }
-  rpc QueryPacketResponse(QueryPacketsReq) returns(QueryPacketsResp){
-    option (api.post) = "/v1/packet/query";
+  rpc ListPacket(ListPacketReq) returns(ListPacketResp){
+    option (api.get) = "/v1/packet/list";
+  }
+  rpc GetPacketByID(GetPacketByIDReq) returns(GetPacketByIDResp){
+    option (api.get) = "/v1/packet/get/:id";
   }
 //  rpc UpdateUserResponse(UpdateUserReq) returns(UpdateUserResp){
 //    option (api.post) = "/v1/user/update/:user_id";
 //  }
-//  rpc DeleteUserResponse(DeleteUserReq) returns(DeleteUserResp){
-//    option (api.post) = "/v1/user/delete/:user_id";
-//  }
+  rpc DeletePacket(DeletePacketReq) returns(DeletePacketResp){
+    option (api.delete) = "/v1/packet/delete";
+  }
+  rpc MUploadAllChannelsPacket(MUploadAllChannelsPacketReq) returns(MUploadAllChannelsPacketResp){
+    option (api.post) = "/v1/packet/mupload";
+  }
 }

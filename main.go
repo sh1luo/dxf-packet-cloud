@@ -7,7 +7,13 @@ import (
 )
 
 func main() {
-	h := server.Default()
+	h := server.Default(
+		server.WithHostPorts(":8080"),
+	)
+
+	h.LoadHTMLGlob("html/packet/*")
+
+	h.StaticFile("favicon.ico", "./html/packet/favicon.ico")
 
 	register(h)
 	h.Spin()

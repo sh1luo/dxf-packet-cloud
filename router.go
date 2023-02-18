@@ -4,12 +4,11 @@ package main
 
 import (
 	"github.com/cloudwego/hertz/pkg/app/server"
-	handler "packet_cloud/biz/handler"
+	"packet_cloud/biz/handler/packet"
 )
 
 // customizeRegister registers customize routers.
 func customizedRegister(r *server.Hertz) {
-	r.GET("/ping", handler.Ping)
-
 	// your code ...
+	r.GET("/v1/packet/edit", packet.OnlineEdit)
 }
