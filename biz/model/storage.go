@@ -24,11 +24,9 @@ func ReadFile() error {
 		return err
 	}
 
-	if len(p) > 0 {
-		Mu.Lock()
-		Packets = p
-		Mu.Unlock()
-	}
+	Mu.Lock()
+	Packets = p
+	Mu.Unlock()
 
 	return nil
 }
