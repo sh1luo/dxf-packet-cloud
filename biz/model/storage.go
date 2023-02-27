@@ -12,27 +12,29 @@ var (
 	Mu      sync.RWMutex
 )
 
-func ReadFile() error {
+func ReadFile() ([]*packet.Packet, error) {
 	// 判断当前周是否存在文件，如果不存在则创建
+
+	p := make([]*packet.Packet, 0)
+
 	bs, err := ioutil.ReadFile("./packets")
 	if err != nil {
-		return err
+		return p, err
 	}
-	p := make([]*packet.Packet, 0)
 	err = json.Unmarshal(bs, &p)
 	if err != nil {
-		return err
+		return p, err
 	}
 
 	Mu.Lock()
 	Packets = p
 	Mu.Unlock()
 
-	return nil
+	return Packets, nil
 }
 
-func SaveFile() error {
-	bs, err := json.Marshal(Packets)
+func SaveFile(p []*packet.Packet) error {
+	bs, err := json.Marshal(p)
 	if err != nil {
 		return err
 	}

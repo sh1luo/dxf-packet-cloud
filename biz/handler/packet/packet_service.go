@@ -6,6 +6,7 @@ import (
 	"context"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
+	"log"
 	"packet_cloud/biz/model"
 	packet "packet_cloud/biz/model/hertz/packet"
 )
@@ -39,13 +40,15 @@ func CreatePacketResponse(ctx context.Context, c *app.RequestContext) {
 		p.ID = 1
 	}
 	model.Packets = append(model.Packets, p)
-	err = model.SaveFile()
+	err = model.SaveFile(model.Packets)
 	if err != nil {
 		resp.Code = 501
 		resp.Msg = "写入失败"
 	}
 	model.Mu.Unlock()
 
+	resp.Code = 0
+	resp.Msg = "上传成功"
 	c.JSON(consts.StatusOK, resp)
 }
 
@@ -62,10 +65,13 @@ func QueryPacketResponse(ctx context.Context, c *app.RequestContext) {
 
 	resp := new(packet.QueryPacketsResp)
 
-	model.ReadFile()
-	model.Mu.RLock()
-	resp.Packet = model.Packets
-	model.Mu.RUnlock()
+	p, err := model.ReadFile()
+	if err != nil {
+		log.Println("read file error:", err)
+	}
 
+	resp.Packet = p
+	resp.Code = 0
+	resp.Msg = "获取云数据包成功"
 	c.JSON(consts.StatusOK, resp)
 }
