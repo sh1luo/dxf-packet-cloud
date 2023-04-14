@@ -4,6 +4,7 @@ package packet
 
 import (
 	"context"
+	"fmt"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 	"log"
@@ -25,15 +26,19 @@ func CreatePacketResponse(ctx context.Context, c *app.RequestContext) {
 	resp := new(packet.CreatePacketResp)
 
 	p := &packet.Packet{
-		ID:       req.ID,
-		Region:   req.Region,
-		Name:     req.Name,
-		Content:  req.Content,
-		Channel:  req.Channel,
-		Uploader: req.Uploader,
-		Time:     req.Time,
+		ID:         req.ID,
+		Region:     req.Region,
+		Name:       req.Name,
+		Content:    req.Content,
+		Channel:    req.Channel,
+		Uploader:   req.Uploader,
+		Time:       req.Time,
+		SendTiming: req.SendTiming,
 	}
 	model.Mu.Lock()
+	defer func() {
+		model.Mu.Unlock()
+	}()
 	if len(model.Packets) > 0 {
 		p.ID = model.Packets[len(model.Packets)-1].ID + 1
 	} else {
@@ -43,9 +48,10 @@ func CreatePacketResponse(ctx context.Context, c *app.RequestContext) {
 	err = model.SaveFile(model.Packets)
 	if err != nil {
 		resp.Code = 501
-		resp.Msg = "写入失败"
+		resp.Msg = "上传失败"
+		c.JSON(consts.StatusOK, resp)
+		return
 	}
-	model.Mu.Unlock()
 
 	resp.Code = 0
 	resp.Msg = "上传成功"
@@ -68,10 +74,49 @@ func QueryPacketResponse(ctx context.Context, c *app.RequestContext) {
 	p, err := model.ReadFile()
 	if err != nil {
 		log.Println("read file error:", err)
+		resp.Code = 501
+		resp.Msg = "获取云数据包失败"
+		c.JSON(consts.StatusOK, resp)
+		return
 	}
 
 	resp.Packet = p
 	resp.Code = 0
 	resp.Msg = "获取云数据包成功"
+	c.JSON(consts.StatusOK, resp)
+}
+
+// DeleteUserResponse .
+// @router /v1/user/delete/:id [POST]
+func DeleteUserResponse(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req packet.DeletePacketReq
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+
+	resp := new(packet.DeletePacketResp)
+
+	model.Mu.Lock()
+	defer func() {
+		model.Mu.Unlock()
+	}()
+	deleted := 0
+	for idx, p := range model.Packets {
+		if p.ID == req.ID {
+			model.Packets = append(model.Packets[:idx], model.Packets[idx+1:]...)
+			deleted += 1
+		}
+	}
+	if deleted > 0 {
+		resp.Code = 0
+		resp.Msg = fmt.Sprintf("删除成功，一共删除%d条数据", deleted)
+		c.JSON(consts.StatusOK, resp)
+		return
+	}
+	resp.Code = -1
+	resp.Msg = fmt.Sprintf("未找到删除数据，id=%d", deleted)
 	c.JSON(consts.StatusOK, resp)
 }

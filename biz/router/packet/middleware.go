@@ -35,3 +35,13 @@ func _packetMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }
+
+func _deleteMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _deleteuserresponseMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}

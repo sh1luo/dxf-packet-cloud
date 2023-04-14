@@ -21,6 +21,7 @@ message Packet{
   string Channel = 5;
   string Uploader = 6;
   string Time = 7;
+  string SendTiming = 8;
 }
 
 message CreatePacketReq{
@@ -31,6 +32,7 @@ message CreatePacketReq{
   string Channel = 5 [(api.body) = "channel", (api.form) = "channel"];
   string Uploader = 6 [(api.body) = "uploader", (api.form) = "uploader"];
   string Time = 7 [(api.body) = "time", (api.form) = "time"];
+  string SendTiming = 8 [(api.body) = "send_timing", (api.form) = "send_timing"];
 }
 
 message CreatePacketResp{
@@ -50,14 +52,14 @@ message QueryPacketsResp{
   int64 Total = 4;
 }
 
-//message DeleteUserReq{
-//  int64 UserID = 1 [(api.path) = "user_id", (api.vd) = "$>0"];
-//}
-//
-//message DeleteUserResp{
-//  Code Code = 1;
-//  string Msg = 2;
-//}
+message DeletePacketReq{
+  int64 ID = 1 [(api.path) = "id"];
+}
+
+message DeletePacketResp{
+  Code Code = 1;
+  string Msg = 2;
+}
 //
 //message UpdateUserReq{
 //  int64 UserID = 1 [(api.path) = "user_id", (api.vd) = "$>0"];
@@ -87,7 +89,7 @@ service PacketService {
 //  rpc UpdateUserResponse(UpdateUserReq) returns(UpdateUserResp){
 //    option (api.post) = "/v1/user/update/:user_id";
 //  }
-//  rpc DeleteUserResponse(DeleteUserReq) returns(DeleteUserResp){
-//    option (api.post) = "/v1/user/delete/:user_id";
-//  }
+  rpc DeleteUserResponse(DeletePacketReq) returns(DeletePacketResp){
+    option (api.post) = "/v1/user/delete/:id";
+  }
 }
