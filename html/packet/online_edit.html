@@ -1,0 +1,67 @@
+{{ define "packet/online_edit.html" }}
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <title>结构体数组渲染</title>
+</head>
+<body>
+
+<!--type Packet struct {-->
+<!--state         protoimpl.MessageState-->
+<!--sizeCache     protoimpl.SizeCache-->
+<!--unknownFields protoimpl.UnknownFields-->
+
+<!--ID         int64  `protobuf:"varint,1,opt,name=ID,proto3" json:"ID,omitempty" form:"ID" query:"ID"`-->
+<!--Region     string `protobuf:"bytes,2,opt,name=Region,proto3" json:"Region,omitempty" form:"Region" query:"Region"`-->
+<!--Name       string `protobuf:"bytes,3,opt,name=Name,proto3" json:"Name,omitempty" form:"Name" query:"Name"`-->
+<!--Content    string `protobuf:"bytes,4,opt,name=Content,proto3" json:"Content,omitempty" form:"Content" query:"Content"`-->
+<!--Channel    string `protobuf:"bytes,5,opt,name=Channel,proto3" json:"Channel,omitempty" form:"Channel" query:"Channel"`-->
+<!--Uploader   string `protobuf:"bytes,6,opt,name=Uploader,proto3" json:"Uploader,omitempty" form:"Uploader" query:"Uploader"`-->
+<!--Time       string `protobuf:"bytes,7,opt,name=Time,proto3" json:"Time,omitempty" form:"Time" query:"Time"`-->
+<!--SendTiming string `protobuf:"bytes,8,opt,name=SendTiming,proto3" json:"SendTiming,omitempty" form:"SendTiming" query:"SendTiming"`-->
+<!--}-->
+
+<h4 align="center">云包列表</h4>
+{{ range $i, $v := . }}
+<table>
+    <tr>
+        <td>
+            <span>{{ $i }}</span>
+        </td>
+        <td>
+            <span>{{ $v.ID }}</span>
+        </td>
+        <td>
+            <span>{{ $v.Region }}</span>
+        </td>
+        <td>
+            <span>{{ $v.Name }}</span>
+        </td>
+        <td>
+            <span>内容暂时无法编辑</span>
+        </td>
+        <td>
+            <span>{{ $v.Channel }}</span>
+        </td>
+        <td>
+            <span>{{ $v.Uploader }}</span>
+        </td>
+        <td>
+            <span>{{ $v.SendTiming }}</span>
+        </td>
+        <td><button onclick="function f() {
+          
+        }">我是删除按钮</button></td>>
+    </tr>
+</table>
+{{ end }}
+</body>
+</html>
+{{ end }}
+
+<script >
+    function trimAllSpace(str) {
+        return str.replace(/\s*/g,"")
+    }
+
+</script>

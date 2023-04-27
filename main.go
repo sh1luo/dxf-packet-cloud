@@ -9,6 +9,8 @@ import (
 func main() {
 	h := server.Default()
 
+	h.LoadHTMLGlob("html/**/*")
+
 	register(h)
 	h.Spin()
 }
