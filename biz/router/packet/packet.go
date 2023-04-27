@@ -28,7 +28,7 @@ func Register(r *server.Hertz) {
 			_user := _v1.Group("/user", _userMw()...)
 			{
 				_delete := _user.Group("/delete", _deleteMw()...)
-				_delete.POST("/:id", append(_deleteuserresponseMw(), packet.DeleteUserResponse)...)
+				_delete.GET("/:id", append(_deleteuserresponseMw(), packet.DeleteUserResponse)...)
 			}
 		}
 	}

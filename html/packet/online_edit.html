@@ -2,38 +2,27 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>结构体数组渲染</title>
 </head>
 <body>
 
-<!--type Packet struct {-->
-<!--state         protoimpl.MessageState-->
-<!--sizeCache     protoimpl.SizeCache-->
-<!--unknownFields protoimpl.UnknownFields-->
-
-<!--ID         int64  `protobuf:"varint,1,opt,name=ID,proto3" json:"ID,omitempty" form:"ID" query:"ID"`-->
-<!--Region     string `protobuf:"bytes,2,opt,name=Region,proto3" json:"Region,omitempty" form:"Region" query:"Region"`-->
-<!--Name       string `protobuf:"bytes,3,opt,name=Name,proto3" json:"Name,omitempty" form:"Name" query:"Name"`-->
-<!--Content    string `protobuf:"bytes,4,opt,name=Content,proto3" json:"Content,omitempty" form:"Content" query:"Content"`-->
-<!--Channel    string `protobuf:"bytes,5,opt,name=Channel,proto3" json:"Channel,omitempty" form:"Channel" query:"Channel"`-->
-<!--Uploader   string `protobuf:"bytes,6,opt,name=Uploader,proto3" json:"Uploader,omitempty" form:"Uploader" query:"Uploader"`-->
-<!--Time       string `protobuf:"bytes,7,opt,name=Time,proto3" json:"Time,omitempty" form:"Time" query:"Time"`-->
-<!--SendTiming string `protobuf:"bytes,8,opt,name=SendTiming,proto3" json:"SendTiming,omitempty" form:"SendTiming" query:"SendTiming"`-->
-<!--}-->
-
 <h4 align="center">云包列表</h4>
-{{ range $i, $v := . }}
-<span>{{ $i }}</span>
+<h3><button id="post-btn" onclick="call(15)">删除该行</button><input /></h3>h3>
+{{ range $i, $v := .packets }}
+<span id="idd">{{ $i }}</span>
 <span>{{ $v.ID }}</span>
 <span>{{ $v.Region }}</span>
 <span>{{ $v.Name }}</span>
 <span>内容暂时无法编辑</span>
 <span>{{ $v.Channel }}</span>
 <span>{{ $v.Uploader }}</span>
+<span>{{ $v.Time }}</span>
 <span>{{ $v.SendTiming }}</span>
-<button onclick="function f() {
 
-}">删除该行</button>
+</br>
 
 {{ end }}
 </body>
@@ -41,7 +30,26 @@
 {{ end }}
 
 <script >
-    function trimAllSpace(str) {
-        return str.replace(/\s*/g,"")
+    function call(id) {
+        const xhr = new XMLHttpRequest();
+        xhr.open("GET", "127.0.0.1:8888/v1/user/delete/", false);  //建立连接，要求同步响应
+        xhr.send("ID="+id);  //发送请求
+        alert(xhr.responseText);  //接收数据
     }
+
+    // const button = document.getElementById('post-btn');
+    //
+    // button.addEventListener('click', async _ => {
+    //     try {
+    //         const response = await fetch('127.0.0.1:8888/v1/user/delete/', {
+    //             method: 'get',
+    //             body: {
+    //                 // Your body
+    //             }
+    //         });
+    //         console.log('Completed!', response);
+    //     } catch(err) {
+    //         console.error(`Error: ${err}`);
+    //     }
+    // });
 </script>

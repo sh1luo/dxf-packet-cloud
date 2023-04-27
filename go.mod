@@ -4,6 +4,7 @@ go 1.17
 
 require (
 	github.com/cloudwego/hertz v0.6.2
+	github.com/robfig/cron/v3 v3.0.0
 	google.golang.org/protobuf v1.28.1
 )
 

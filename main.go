@@ -4,12 +4,21 @@ package main
 
 import (
 	"github.com/cloudwego/hertz/pkg/app/server"
+	"github.com/robfig/cron/v3"
+	"os/exec"
 )
 
 func main() {
 	h := server.Default()
 
 	h.LoadHTMLGlob("html/**/*")
+	c := cron.New()
+	c.AddFunc("0 6 6 * * 4", func() {
+		exec.Command("echo [] > ./packets")
+	})
+	//5 6 * * 4 echo [] > /home/USER/packet_cloud/packets
+
+	c.Start()
 
 	register(h)
 	h.Spin()

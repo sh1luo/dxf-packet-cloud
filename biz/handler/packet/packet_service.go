@@ -114,8 +114,17 @@ func DeleteUserResponse(ctx context.Context, c *app.RequestContext) {
 		resp.Code = 0
 		resp.Msg = fmt.Sprintf("删除成功，一共删除%d条数据", deleted)
 		c.JSON(consts.StatusOK, resp)
+		log.Println("req=", req)
+		err = model.SaveFile(model.Packets)
+		if err != nil {
+			resp.Code = 501
+			resp.Msg = "删除后保存失败"
+			c.JSON(consts.StatusOK, resp)
+			return
+		}
 		return
 	}
+	log.Println("req=", req)
 	resp.Code = -1
 	resp.Msg = fmt.Sprintf("未找到删除数据，id=%d", deleted)
 	c.JSON(consts.StatusOK, resp)
