@@ -23,37 +23,18 @@
 
 <h4 align="center">云包列表</h4>
 {{ range $i, $v := . }}
-<table>
-    <tr>
-        <td>
-            <span>{{ $i }}</span>
-        </td>
-        <td>
-            <span>{{ $v.ID }}</span>
-        </td>
-        <td>
-            <span>{{ $v.Region }}</span>
-        </td>
-        <td>
-            <span>{{ $v.Name }}</span>
-        </td>
-        <td>
-            <span>内容暂时无法编辑</span>
-        </td>
-        <td>
-            <span>{{ $v.Channel }}</span>
-        </td>
-        <td>
-            <span>{{ $v.Uploader }}</span>
-        </td>
-        <td>
-            <span>{{ $v.SendTiming }}</span>
-        </td>
-        <td><button onclick="function f() {
-          
-        }">我是删除按钮</button></td>>
-    </tr>
-</table>
+<span>{{ $i }}</span>
+<span>{{ $v.ID }}</span>
+<span>{{ $v.Region }}</span>
+<span>{{ $v.Name }}</span>
+<span>内容暂时无法编辑</span>
+<span>{{ $v.Channel }}</span>
+<span>{{ $v.Uploader }}</span>
+<span>{{ $v.SendTiming }}</span>
+<button onclick="function f() {
+
+}">删除该行</button>
+
 {{ end }}
 </body>
 </html>
