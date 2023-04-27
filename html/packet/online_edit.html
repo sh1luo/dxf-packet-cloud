@@ -10,10 +10,9 @@
 <body>
 
 <h4 align="center">云包列表</h4>
-<h3><button id="post-btn" onclick="call(15)">删除该行</button><input /></h3>h3>
 {{ range $i, $v := .packets }}
-<span id="idd">{{ $i }}</span>
-<span>{{ $v.ID }}</span>
+<span>{{ $i }}</span>
+<span id="idd">{{ $v.ID }}</span>
 <span>{{ $v.Region }}</span>
 <span>{{ $v.Name }}</span>
 <span>内容暂时无法编辑</span>
@@ -21,7 +20,7 @@
 <span>{{ $v.Uploader }}</span>
 <span>{{ $v.Time }}</span>
 <span>{{ $v.SendTiming }}</span>
-
+<button id="post-btn" onclick="call(15)">删除该行</button>
 </br>
 
 {{ end }}
@@ -35,6 +34,14 @@
         xhr.open("GET", "127.0.0.1:8888/v1/user/delete/", false);  //建立连接，要求同步响应
         xhr.send("ID="+id);  //发送请求
         alert(xhr.responseText);  //接收数据
+
+        const response = fetch('127.0.0.1:8888/v1/user/delete/15', {
+                        method: 'get',
+                        body: {
+                            // Your body
+                        }
+                    });
+        alert("1 "+response)
     }
 
     // const button = document.getElementById('post-btn');

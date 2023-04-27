@@ -103,16 +103,16 @@ func DeleteUserResponse(ctx context.Context, c *app.RequestContext) {
 	defer func() {
 		model.Mu.Unlock()
 	}()
-	deleted := 0
+	deleted := make([]int64, 0)
 	for idx, p := range model.Packets {
 		if p.ID == req.ID {
 			model.Packets = append(model.Packets[:idx], model.Packets[idx+1:]...)
-			deleted += 1
+			deleted = append(deleted, p.ID)
 		}
 	}
-	if deleted > 0 {
+	if len(deleted) > 0 {
 		resp.Code = 0
-		resp.Msg = fmt.Sprintf("删除成功，一共删除%d条数据", deleted)
+		resp.Msg = fmt.Sprintf("删除成功，删除了%v", deleted)
 		c.JSON(consts.StatusOK, resp)
 		log.Println("req=", req)
 		err = model.SaveFile(model.Packets)
