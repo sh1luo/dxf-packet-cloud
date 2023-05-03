@@ -90,6 +90,6 @@ service PacketService {
 //    option (api.post) = "/v1/user/update/:user_id";
 //  }
   rpc DeleteUserResponse(DeletePacketReq) returns(DeletePacketResp){
-    option (api.post) = "/v1/user/delete/:id";
+    option (api.post) = "/v1/packet/delete/:id";
   }
 }

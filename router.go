@@ -12,5 +12,5 @@ func customizedRegister(r *server.Hertz) {
 	r.GET("/ping", handler.Ping)
 
 	// your code ...
-	r.GET("/edit", handler.OnlineEdit)
+	r.GET("/v1/packet/edit", handler.OnlineEdit)
 }

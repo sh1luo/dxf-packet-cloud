@@ -9,9 +9,34 @@
 </head>
 <body>
 
+<button onclick="makePostRequest()">点击我触发 POST 请求</button>
+
+<script>
+    function makePostRequest() {
+        // 获取编辑框中的内容
+        const name = document.getElementById("name").value;
+
+        // 创建 POST 请求
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", "127.0.0.1:8888/v1/packet/delete");
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                alert(xhr.responseText);
+            } else {
+                alert("Request failed.  Returned status of " + xhr.status);
+            }
+        };
+        xhr.send(JSON.stringify({
+            name: name,
+        }));
+    }
+</script>
+
+<input type="text" id="name" placeholder="请输入想要删除的封包编号">
+
 <h4 align="center">云包列表</h4>
 {{ range $i, $v := .packets }}
-<span>{{ $i }}</span>
 <span id="idd">{{ $v.ID }}</span>
 <span>{{ $v.Region }}</span>
 <span>{{ $v.Name }}</span>
@@ -20,43 +45,9 @@
 <span>{{ $v.Uploader }}</span>
 <span>{{ $v.Time }}</span>
 <span>{{ $v.SendTiming }}</span>
-<button id="post-btn" onclick="call(15)">删除该行</button>
 </br>
 
 {{ end }}
 </body>
 </html>
 {{ end }}
-
-<script >
-    function call(id) {
-        const xhr = new XMLHttpRequest();
-        xhr.open("GET", "127.0.0.1:8888/v1/user/delete/", false);  //建立连接，要求同步响应
-        xhr.send("ID="+id);  //发送请求
-        alert(xhr.responseText);  //接收数据
-
-        const response = fetch('127.0.0.1:8888/v1/user/delete/15', {
-                        method: 'get',
-                        body: {
-                            // Your body
-                        }
-                    });
-        alert("1 "+response)
-    }
-
-    // const button = document.getElementById('post-btn');
-    //
-    // button.addEventListener('click', async _ => {
-    //     try {
-    //         const response = await fetch('127.0.0.1:8888/v1/user/delete/', {
-    //             method: 'get',
-    //             body: {
-    //                 // Your body
-    //             }
-    //         });
-    //         console.log('Completed!', response);
-    //     } catch(err) {
-    //         console.error(`Error: ${err}`);
-    //     }
-    // });
-</script>
