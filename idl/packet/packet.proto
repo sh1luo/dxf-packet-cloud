@@ -84,7 +84,7 @@ service PacketService {
     option (api.post) = "/v1/packet/create";
   }
   rpc QueryPacketResponse(QueryPacketsReq) returns(QueryPacketsResp){
-    option (api.get) = "/v1/packet/query";
+    option (api.post) = "/v1/packet/query";
   }
 //  rpc UpdateUserResponse(UpdateUserReq) returns(UpdateUserResp){
 //    option (api.post) = "/v1/user/update/:user_id";
