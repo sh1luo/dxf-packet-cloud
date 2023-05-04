@@ -41,8 +41,8 @@ message CreatePacketResp{
 }
 
 message QueryPacketsReq{
-  string Time = 1 [(api.body) = "time", (api.form) = "time", (api.vd) = "len($)>0"];
-  string Account = 2 [(api.body) = "account", (api.form) = "account", (api.vd) = "len($)>0 && len($)<20"];
+  string Time = 1 [(api.body) = "time", (api.form) = "time"];
+  string Account = 2 [(api.body) = "account", (api.form) = "account"];
 }
 
 message QueryPacketsResp{
@@ -84,7 +84,7 @@ service PacketService {
     option (api.post) = "/v1/packet/create";
   }
   rpc QueryPacketResponse(QueryPacketsReq) returns(QueryPacketsResp){
-    option (api.post) = "/v1/packet/query";
+    option (api.get) = "/v1/packet/query";
   }
 //  rpc UpdateUserResponse(UpdateUserReq) returns(UpdateUserResp){
 //    option (api.post) = "/v1/user/update/:user_id";

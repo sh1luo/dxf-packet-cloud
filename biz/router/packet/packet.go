@@ -22,13 +22,10 @@ func Register(r *server.Hertz) {
 		{
 			_packet := _v1.Group("/packet", _packetMw()...)
 			_packet.POST("/create", append(_createpacketresponseMw(), packet.CreatePacketResponse)...)
-			_packet.POST("/query", append(_querypacketresponseMw(), packet.QueryPacketResponse)...)
-		}
-		{
-			_user := _v1.Group("/user", _userMw()...)
+			_packet.GET("/query", append(_querypacketresponseMw(), packet.QueryPacketResponse)...)
 			{
-				_delete := _user.Group("/delete", _deleteMw()...)
-				_delete.GET("/:id", append(_deleteuserresponseMw(), packet.DeleteUserResponse)...)
+				_delete := _packet.Group("/delete", _deleteMw()...)
+				_delete.POST("/:id", append(_deleteuserresponseMw(), packet.DeleteUserResponse)...)
 			}
 		}
 	}

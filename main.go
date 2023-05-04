@@ -3,9 +3,13 @@
 package main
 
 import (
+	"encoding/json"
 	"github.com/cloudwego/hertz/pkg/app/server"
 	"github.com/robfig/cron/v3"
-	"os/exec"
+	"io/ioutil"
+	"log"
+	"packet_cloud/biz/model"
+	"time"
 )
 
 func main() {
@@ -13,8 +17,25 @@ func main() {
 
 	h.LoadHTMLGlob("html/**/*")
 	c := cron.New()
-	c.AddFunc("0 6 6 * * 4", func() {
-		exec.Command("echo [] > ./packets")
+	c.AddFunc("6 6 * * 4", func() {
+		filename := time.Now().String()[:19]
+		bs, err := json.Marshal(model.Packets)
+		if err != nil {
+			log.Println(err)
+			return
+		}
+		err = ioutil.WriteFile(filename, bs, 0644)
+		if err != nil {
+			log.Println(err)
+			return
+		}
+		err = ioutil.WriteFile("packets", []byte("[]"), 0644)
+		if err != nil {
+			log.Println(err)
+			return
+		}
+		//exec.Command("echo [] > ./packets")
+		log.Println("备份数据文件成功")
 	})
 	//5 6 * * 4 echo [] > /home/USER/packet_cloud/packets
 
