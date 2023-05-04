@@ -9,7 +9,7 @@
 </head>
 <body>
 
-<button onclick="makePostRequest()">点击我触发 POST 请求</button>
+<button onclick="makePostRequest()">删除这行云包</button>
 
 <script>
     function makePostRequest() {
@@ -18,11 +18,12 @@
 
         // 创建 POST 请求
         const xhr = new XMLHttpRequest();
-        xhr.open("POST", "127.0.0.1:8888/v1/packet/delete");
+        xhr.open("POST", "/v1/packet/delete/"+name);
         xhr.setRequestHeader("Content-Type", "application/json");
         xhr.onload = function() {
             if (xhr.status === 200) {
                 alert(xhr.responseText);
+                location.reload()
             } else {
                 alert("Request failed.  Returned status of " + xhr.status);
             }
@@ -33,7 +34,7 @@
     }
 </script>
 
-<input type="text" id="name" placeholder="请输入想要删除的封包编号">
+<input type="text" id="name" placeholder="想删除的封包编号">
 
 <h4 align="center">云包列表</h4>
 {{ range $i, $v := .packets }}
@@ -45,7 +46,7 @@
 <span>{{ $v.Uploader }}</span>
 <span>{{ $v.Time }}</span>
 <span>{{ $v.SendTiming }}</span>
-</br>
+<br>
 
 {{ end }}
 </body>
