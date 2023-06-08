@@ -1,44 +1,33 @@
 package model
 
 import (
-	"encoding/json"
-	"io/ioutil"
+	"github.com/bytedance/sonic"
+	"os"
 	"packet_cloud/biz/model/hertz/packet"
-	"sync"
 )
 
-var (
-	Packets []*packet.Packet
-	Mu      sync.RWMutex
-)
-
-func ReadFile() ([]*packet.Packet, error) {
-	// 判断当前周是否存在文件，如果不存在则创建
-
+// ReadPackets 从文件中读取云包
+func ReadPackets() ([]*packet.Packet, error) {
 	p := make([]*packet.Packet, 0)
 
-	bs, err := ioutil.ReadFile("./packets")
+	bs, err := os.ReadFile("./packets")
 	if err != nil {
 		return p, err
 	}
-	err = json.Unmarshal(bs, &p)
+	err = sonic.Unmarshal(bs, &p)
 	if err != nil {
 		return p, err
 	}
 
-	Mu.Lock()
-	Packets = p
-	Mu.Unlock()
-
-	return Packets, nil
+	return p, nil
 }
 
 func SaveFile(p []*packet.Packet) error {
-	bs, err := json.Marshal(p)
+	bs, err := sonic.Marshal(p)
 	if err != nil {
 		return err
 	}
-	err = ioutil.WriteFile("./packets", bs, 0644)
+	err = os.WriteFile("./packets", bs, 0644)
 	if err != nil {
 		return err
 	}

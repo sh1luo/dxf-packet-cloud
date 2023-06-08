@@ -12,7 +12,7 @@ import (
 // OnlineEdit .
 // @router /edit [GET]
 func OnlineEdit(ctx context.Context, c *app.RequestContext) {
-	packets, err := model.ReadFile()
+	packets, err := model.ReadPackets()
 	if err != nil {
 		log.Println("[OnlineEdit] read file error", err)
 		return

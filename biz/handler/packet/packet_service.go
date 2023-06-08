@@ -10,6 +10,11 @@ import (
 	"log"
 	"packet_cloud/biz/model"
 	packet "packet_cloud/biz/model/hertz/packet"
+	"sync"
+)
+
+var (
+	writeLock = sync.Mutex{}
 )
 
 // CreatePacketResponse .
@@ -35,17 +40,27 @@ func CreatePacketResponse(ctx context.Context, c *app.RequestContext) {
 		Time:       req.Time,
 		SendTiming: req.SendTiming,
 	}
-	model.Mu.Lock()
-	defer func() {
-		model.Mu.Unlock()
-	}()
-	if len(model.Packets) > 0 {
-		p.ID = model.Packets[len(model.Packets)-1].ID + 1
+
+	writeLock.Lock()
+
+	packets, err := model.ReadPackets()
+	if err != nil {
+		log.Println("[ReadPackets] read packets error", err)
+		c.JSON(consts.StatusInternalServerError, resp)
+		return
+	}
+
+	if len(packets) > 0 {
+		p.ID = packets[len(packets)-1].ID + 1
 	} else {
 		p.ID = 1
 	}
-	model.Packets = append(model.Packets, p)
-	err = model.SaveFile(model.Packets)
+	packets = append(packets, p)
+
+	err = model.SaveFile(packets)
+
+	writeLock.Unlock()
+
 	if err != nil {
 		resp.Code = 501
 		resp.Msg = "上传失败"
@@ -71,7 +86,7 @@ func QueryPacketResponse(ctx context.Context, c *app.RequestContext) {
 
 	resp := new(packet.QueryPacketsResp)
 
-	p, err := model.ReadFile()
+	packets, err := model.ReadPackets()
 	if err != nil {
 		log.Println("read file error:", err)
 		resp.Code = 501
@@ -80,7 +95,7 @@ func QueryPacketResponse(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	resp.Packet = p
+	resp.Packet = packets
 	resp.Code = 0
 	resp.Msg = "获取云数据包成功"
 	c.JSON(consts.StatusOK, resp)
@@ -99,32 +114,43 @@ func DeleteUserResponse(ctx context.Context, c *app.RequestContext) {
 
 	resp := new(packet.DeletePacketResp)
 
-	model.Mu.Lock()
-	defer func() {
-		model.Mu.Unlock()
-	}()
+	writeLock.Lock()
+	defer writeLock.Unlock()
+
 	deleted := make([]int64, 0)
-	for idx, p := range model.Packets {
+
+	packets, err := model.ReadPackets()
+	if err != nil {
+		log.Println("read file error:", err)
+		resp.Code = 501
+		resp.Msg = "删除失败，读数据包失败"
+		c.JSON(consts.StatusOK, resp)
+		return
+	}
+
+	for idx, p := range packets {
 		if p.ID == req.ID {
-			model.Packets = append(model.Packets[:idx], model.Packets[idx+1:]...)
+			packets = append(packets[:idx], packets[idx+1:]...)
 			deleted = append(deleted, p.ID)
 		}
 	}
+
 	if len(deleted) > 0 {
 		resp.Code = 0
 		resp.Msg = fmt.Sprintf("删除成功，删除了%v", deleted)
 		c.JSON(consts.StatusOK, resp)
-		log.Println("req=", req)
-		err = model.SaveFile(model.Packets)
+
+		err = model.SaveFile(packets)
 		if err != nil {
 			resp.Code = 501
 			resp.Msg = "删除后保存失败"
 			c.JSON(consts.StatusOK, resp)
 			return
 		}
+
 		return
 	}
-	log.Println("req=", req)
+
 	resp.Code = -1
 	resp.Msg = fmt.Sprintf("未找到删除数据，id=%d", deleted)
 	c.JSON(consts.StatusOK, resp)
