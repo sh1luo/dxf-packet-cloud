@@ -13,52 +13,52 @@ enum Code {
   DBErr = 2;
 }
 
-message Packet{
-  int64 ID = 1;
-  string Region = 2;
-  string Name = 3;
-  string Content = 4;
-  string Channel = 5;
-  string Uploader = 6;
-  string Time = 7;
-  string SendTiming = 8;
+message UserPacket{
+  int32 id = 1;
+  string name = 2;
+  string content = 3;
+  int32 size = 4;
+  string send_timing = 5;
 }
 
-message CreatePacketReq{
-  int64 ID = 1 [(api.body) = "id", (api.form) = "id"];
-  string Region = 2 [(api.body) = "region", (api.form) = "region"];
-  string Name = 3 [(api.body) = "name", (api.form) = "name"];
-  string Content = 4 [(api.body) = "content", (api.form) = "content"];
-  string Channel = 5 [(api.body) = "channel", (api.form) = "channel"];
-  string Uploader = 6 [(api.body) = "uploader", (api.form) = "uploader"];
-  string Time = 7 [(api.body) = "time", (api.form) = "time"];
-  string SendTiming = 8 [(api.body) = "send_timing", (api.form) = "send_timing"];
+message CloudPacket{
+  int32 id = 1;
+  string region = 2 ;
+  string name = 3 ;
+  string channel = 4 ;
+  string uploader = 5 ;
+  string time = 6;
+
+  repeated UserPacket user_packets = 7;
 }
 
-message CreatePacketResp{
-  Code Code = 1;
-  string Msg = 2;
+message UploadPacketReq{
+  CloudPacket cloud_packet = 1;
 }
 
-message QueryPacketsReq{
-  string Time = 1 [(api.body) = "time", (api.form) = "time"];
-  string Account = 2 [(api.body) = "account", (api.form) = "account"];
+message UploadPacketResp{
+  Code code = 1;
+  string msg = 2;
 }
 
-message QueryPacketsResp{
-  Code Code = 1;
-  string Msg = 2;
-  repeated Packet Packet = 3;
-  int64 Total = 4;
+message GetPacketReq{
+  string time = 1;
+  string username = 2;
+}
+
+message GetPacketResp{
+  Code code = 1;
+  string msg = 2;
+  repeated CloudPacket cloud_packets = 3;
 }
 
 message DeletePacketReq{
-  int64 ID = 1 [(api.path) = "id"];
+  int32 id = 1;
 }
 
 message DeletePacketResp{
-  Code Code = 1;
-  string Msg = 2;
+  Code code = 1;
+  string msg = 2;
 }
 //
 //message UpdateUserReq{
@@ -80,16 +80,16 @@ message DeletePacketResp{
 
 
 service PacketService {
-  rpc CreatePacketResponse(CreatePacketReq) returns(CreatePacketResp) {
-    option (api.post) = "/v1/packet/create";
+  rpc UploadPacket(UploadPacketReq) returns(UploadPacketResp) {
+    option (api.post) = "/v1/packet/upload";
   }
-  rpc QueryPacketResponse(QueryPacketsReq) returns(QueryPacketsResp){
-    option (api.post) = "/v1/packet/query";
+  rpc GetPacket(GetPacketReq) returns(GetPacketResp){
+    option (api.get) = "/v1/packet/get";
   }
 //  rpc UpdateUserResponse(UpdateUserReq) returns(UpdateUserResp){
 //    option (api.post) = "/v1/user/update/:user_id";
 //  }
-  rpc DeleteUserResponse(DeletePacketReq) returns(DeletePacketResp){
-    option (api.post) = "/v1/packet/delete/:id";
+  rpc DeletePacket(DeletePacketReq) returns(DeletePacketResp){
+    option (api.delete) = "/v1/packet/delete/:id";
   }
 }

@@ -21,11 +21,11 @@ func Register(r *server.Hertz) {
 		_v1 := root.Group("/v1", _v1Mw()...)
 		{
 			_packet := _v1.Group("/packet", _packetMw()...)
-			_packet.POST("/create", append(_createpacketresponseMw(), packet.CreatePacketResponse)...)
-			_packet.POST("/query", append(_querypacketresponseMw(), packet.QueryPacketResponse)...)
+			_packet.GET("/get", append(_getpacketMw(), packet.GetPacket)...)
+			_packet.POST("/upload", append(_uploadpacketMw(), packet.UploadPacket)...)
 			{
 				_delete := _packet.Group("/delete", _deleteMw()...)
-				_delete.POST("/:id", append(_deleteuserresponseMw(), packet.DeleteUserResponse)...)
+				_delete.DELETE("/:id", append(_deletepacketMw(), packet.DeletePacket)...)
 			}
 		}
 	}

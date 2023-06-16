@@ -45,3 +45,28 @@ func _deleteuserresponseMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }
+
+func _getpacketresponseMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _uploadpacketresponseMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _getpacketMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _uploadpacketMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _deletepacketMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}

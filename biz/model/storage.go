@@ -7,8 +7,8 @@ import (
 )
 
 // ReadPackets 从文件中读取云包
-func ReadPackets() ([]*packet.Packet, error) {
-	p := make([]*packet.Packet, 0)
+func ReadPackets() ([]*packet.CloudPacket, error) {
+	p := make([]*packet.CloudPacket, 0)
 
 	bs, err := os.ReadFile("./packets")
 	if err != nil {
@@ -22,7 +22,7 @@ func ReadPackets() ([]*packet.Packet, error) {
 	return p, nil
 }
 
-func SaveFile(p []*packet.Packet) error {
+func SavePackets(p []*packet.CloudPacket) error {
 	bs, err := sonic.Marshal(p)
 	if err != nil {
 		return err

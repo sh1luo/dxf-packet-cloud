@@ -14,52 +14,51 @@ import (
 )
 
 var (
-	writeLock = sync.Mutex{}
+	writeLock = sync.RWMutex{}
 )
 
-// CreatePacketResponse .
-// @router /v1/user/create [POST]
-func CreatePacketResponse(ctx context.Context, c *app.RequestContext) {
+// UploadPacket .
+// @router /v1/packet/upload [POST]
+func UploadPacket(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req packet.CreatePacketReq
+	var req packet.UploadPacketReq
 	err = c.BindAndValidate(&req)
-	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+	if err != nil || req.CloudPacket == nil || req.CloudPacket.Name == "" || req.CloudPacket.UserPackets == nil ||
+		req.CloudPacket.Region == "" || req.CloudPacket.Channel == "" || req.CloudPacket.Uploader == "" || req.CloudPacket.Time == "" {
+		c.String(consts.StatusBadRequest, "invalid params")
 		return
 	}
 
-	resp := new(packet.CreatePacketResp)
+	resp := new(packet.UploadPacketResp)
 
-	p := &packet.Packet{
-		ID:         req.ID,
-		Region:     req.Region,
-		Name:       req.Name,
-		Content:    req.Content,
-		Channel:    req.Channel,
-		Uploader:   req.Uploader,
-		Time:       req.Time,
-		SendTiming: req.SendTiming,
+	inserted := &packet.CloudPacket{
+		Id:          0,
+		Region:      req.CloudPacket.Region,
+		Name:        req.CloudPacket.Name,
+		Channel:     req.CloudPacket.Channel,
+		Uploader:    req.CloudPacket.Uploader,
+		Time:        req.CloudPacket.Time,
+		UserPackets: req.CloudPacket.UserPackets,
 	}
 
 	writeLock.Lock()
+	defer writeLock.Unlock()
 
 	packets, err := model.ReadPackets()
 	if err != nil {
-		log.Println("[ReadPackets] read packets error", err)
+		log.Println("[UploadPacket] read packets error", err)
 		c.JSON(consts.StatusInternalServerError, resp)
 		return
 	}
 
 	if len(packets) > 0 {
-		p.ID = packets[len(packets)-1].ID + 1
+		inserted.Id = packets[len(packets)-1].Id + 1
 	} else {
-		p.ID = 1
+		inserted.Id = 1
 	}
-	packets = append(packets, p)
+	packets = append(packets, inserted)
 
-	err = model.SaveFile(packets)
-
-	writeLock.Unlock()
+	err = model.SavePackets(packets)
 
 	if err != nil {
 		resp.Code = 501
@@ -70,44 +69,50 @@ func CreatePacketResponse(ctx context.Context, c *app.RequestContext) {
 
 	resp.Code = 0
 	resp.Msg = "上传成功"
+
 	c.JSON(consts.StatusOK, resp)
 }
 
-// QueryPacketResponse .
-// @router /v1/packet/query [POST]
-func QueryPacketResponse(ctx context.Context, c *app.RequestContext) {
+// GetPacket .
+// @router /v1/packet/get [GET]
+func GetPacket(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req packet.QueryPacketsReq
+	var req packet.GetPacketReq
 	err = c.BindAndValidate(&req)
 	if err != nil {
 		c.String(consts.StatusBadRequest, err.Error())
 		return
 	}
 
-	resp := new(packet.QueryPacketsResp)
+	resp := new(packet.GetPacketResp)
+
+	writeLock.RLock()
+	defer writeLock.RUnlock()
 
 	packets, err := model.ReadPackets()
 	if err != nil {
-		log.Println("read file error:", err)
+		log.Println("[GetPacket] read file error:", err)
 		resp.Code = 501
 		resp.Msg = "获取云数据包失败"
 		c.JSON(consts.StatusOK, resp)
 		return
 	}
 
-	resp.Packet = packets
+	resp.CloudPackets = packets
 	resp.Code = 0
 	resp.Msg = "获取云数据包成功"
+
 	c.JSON(consts.StatusOK, resp)
 }
 
-// DeleteUserResponse .
-// @router /v1/user/delete/:id [POST]
-func DeleteUserResponse(ctx context.Context, c *app.RequestContext) {
+// DeletePacket .
+// @router /v1/packet/delete/:id [DELETE]
+func DeletePacket(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req packet.DeletePacketReq
 	err = c.BindAndValidate(&req)
 	if err != nil {
+		log.Println(err)
 		c.String(consts.StatusBadRequest, err.Error())
 		return
 	}
@@ -117,41 +122,43 @@ func DeleteUserResponse(ctx context.Context, c *app.RequestContext) {
 	writeLock.Lock()
 	defer writeLock.Unlock()
 
-	deleted := make([]int64, 0)
+	deletedID := make([]int32, 0)
 
 	packets, err := model.ReadPackets()
 	if err != nil {
-		log.Println("read file error:", err)
+		log.Println("[DeletePacket] read file error:", err)
 		resp.Code = 501
 		resp.Msg = "删除失败，读数据包失败"
 		c.JSON(consts.StatusOK, resp)
 		return
 	}
 
+	notDeletedPackets := make([]*packet.CloudPacket, 0)
 	for idx, p := range packets {
-		if p.ID == req.ID {
-			packets = append(packets[:idx], packets[idx+1:]...)
-			deleted = append(deleted, p.ID)
+		if p.Id != req.Id {
+			notDeletedPackets = append(notDeletedPackets, packets[idx])
+		} else {
+			deletedID = append(deletedID, p.Id)
 		}
 	}
 
-	if len(deleted) > 0 {
+	if len(deletedID) > 0 {
 		resp.Code = 0
-		resp.Msg = fmt.Sprintf("删除成功，删除了%v", deleted)
+		resp.Msg = fmt.Sprintf("删除成功: %v", deletedID)
 		c.JSON(consts.StatusOK, resp)
 
-		err = model.SaveFile(packets)
+		err = model.SavePackets(notDeletedPackets)
 		if err != nil {
 			resp.Code = 501
 			resp.Msg = "删除后保存失败"
 			c.JSON(consts.StatusOK, resp)
-			return
 		}
 
 		return
 	}
 
 	resp.Code = -1
-	resp.Msg = fmt.Sprintf("未找到删除数据，id=%d", deleted)
+	resp.Msg = fmt.Sprintf("未找到删除数据，request id = %d", req.GetId())
+
 	c.JSON(consts.StatusOK, resp)
 }

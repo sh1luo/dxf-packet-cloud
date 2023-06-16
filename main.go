@@ -26,7 +26,7 @@ func main() {
 func autoSave() {
 	c := cron.New()
 	//c.AddFunc("6 6 * * 4", func() {
-	c.AddFunc("* * * * *", func() {
+	c.AddFunc("6 6 * * 4", func() {
 		filename := time.Now().Format("20060102-15-04-saved")
 		packets, err := model.ReadPackets()
 		if err != nil {

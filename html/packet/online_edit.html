@@ -18,7 +18,7 @@
 
         // 创建 POST 请求
         const xhr = new XMLHttpRequest();
-        xhr.open("POST", "/v1/packet/delete/"+name);
+        xhr.open("DELETE", "/v1/packet/delete/"+name);
         xhr.setRequestHeader("Content-Type", "application/json");
         xhr.onload = function() {
             if (xhr.status === 200) {
@@ -29,7 +29,7 @@
             }
         };
         xhr.send(JSON.stringify({
-            name: name,
+            id: parseInt(name),
         }));
     }
 </script>
@@ -38,14 +38,13 @@
 
 <h4 align="center">云包列表</h4>
 {{ range $i, $v := .packets }}
-<span id="idd">{{ $v.ID }}</span>
+<span id="idd">{{ $v.Id }}</span>
 <span>{{ $v.Region }}</span>
 <span>{{ $v.Name }}</span>
 <span>内容暂时无法编辑</span>
 <span>{{ $v.Channel }}</span>
 <span>{{ $v.Uploader }}</span>
 <span>{{ $v.Time }}</span>
-<span>{{ $v.SendTiming }}</span>
 <br>
 
 {{ end }}
