@@ -25,6 +25,7 @@ func UploadPacket(ctx context.Context, c *app.RequestContext) {
 	err = c.BindAndValidate(&req)
 	if err != nil || req.CloudPacket == nil || req.CloudPacket.Name == "" || req.CloudPacket.UserPackets == nil ||
 		req.CloudPacket.Region == "" || req.CloudPacket.Channel == "" || req.CloudPacket.Uploader == "" || req.CloudPacket.Time == "" {
+		log.Println(req, err)
 		c.String(consts.StatusBadRequest, "invalid params")
 		return
 	}
@@ -67,7 +68,7 @@ func UploadPacket(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	resp.Code = 0
+	resp.Code = 200
 	resp.Msg = "上传成功"
 
 	c.JSON(consts.StatusOK, resp)
@@ -91,7 +92,7 @@ func GetPacket(ctx context.Context, c *app.RequestContext) {
 
 	packets, err := model.ReadPackets()
 	if err != nil {
-		log.Println("[GetPacket] read file error:", err)
+		log.Printf("[GetPacket] username=%s, time=%s, error=%s\n", req.Username, req.Time, err)
 		resp.Code = 501
 		resp.Msg = "获取云数据包失败"
 		c.JSON(consts.StatusOK, resp)
@@ -99,8 +100,10 @@ func GetPacket(ctx context.Context, c *app.RequestContext) {
 	}
 
 	resp.CloudPackets = packets
-	resp.Code = 0
+	resp.Code = 200
 	resp.Msg = "获取云数据包成功"
+
+	log.Printf("[GetPacket] username=%s, time=%s, resp=%s\n", req.Username, req.Time, resp)
 
 	c.JSON(consts.StatusOK, resp)
 }
@@ -143,7 +146,7 @@ func DeletePacket(ctx context.Context, c *app.RequestContext) {
 	}
 
 	if len(deletedID) > 0 {
-		resp.Code = 0
+		resp.Code = 200
 		resp.Msg = fmt.Sprintf("删除成功: %v", deletedID)
 		c.JSON(consts.StatusOK, resp)
 
