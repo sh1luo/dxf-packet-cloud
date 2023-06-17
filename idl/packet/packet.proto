@@ -7,12 +7,6 @@ option go_package = "hertz/packet";
 
 import "api.proto";
 
-enum Code {
-  Success = 0;
-  ParamInvalid = 1;
-  DBErr = 2;
-}
-
 message UserPacket{
   int32 id = 1;
   string name = 2;
@@ -37,7 +31,7 @@ message UploadPacketReq{
 }
 
 message UploadPacketResp{
-  Code code = 1;
+  int32 code = 1;
   string msg = 2;
 }
 
@@ -47,7 +41,7 @@ message GetPacketReq{
 }
 
 message GetPacketResp{
-  Code code = 1;
+  int32 code = 1;
   string msg = 2;
   repeated CloudPacket cloud_packets = 3;
 }
@@ -57,7 +51,7 @@ message DeletePacketReq{
 }
 
 message DeletePacketResp{
-  Code code = 1;
+  int32 code = 1;
   string msg = 2;
 }
 //
@@ -70,7 +64,7 @@ message DeletePacketResp{
 //}
 //
 //message UpdateUserResp{
-//  Code Code = 1;
+//  int32 int32 = 1;
 //  string Msg = 2;
 //}
 //
