@@ -25,7 +25,6 @@ func UploadPacket(ctx context.Context, c *app.RequestContext) {
 	err = c.BindAndValidate(&req)
 	if err != nil || req.CloudPacket == nil || req.CloudPacket.Name == "" || req.CloudPacket.UserPackets == nil ||
 		req.CloudPacket.Region == "" || req.CloudPacket.Channel == "" || req.CloudPacket.Uploader == "" || req.CloudPacket.Time == "" {
-		log.Println(req, err)
 		c.String(consts.StatusBadRequest, "invalid params")
 		return
 	}
@@ -103,7 +102,7 @@ func GetPacket(ctx context.Context, c *app.RequestContext) {
 	resp.Code = 200
 	resp.Msg = "获取云数据包成功"
 
-	log.Printf("[GetPacket] username=%s, time=%s, resp=%s\n", req.Username, req.Time, resp)
+	log.Printf("[GetPacket] username=%s, time=%s\n", req.Username, req.Time)
 
 	c.JSON(consts.StatusOK, resp)
 }
