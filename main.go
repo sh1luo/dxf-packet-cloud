@@ -14,7 +14,7 @@ import (
 
 func main() {
 	h := server.Default(
-		server.WithHostPorts("127.0.0.1:7777"),
+		server.WithHostPorts(":7777"),
 	)
 
 	h.LoadHTMLGlob("html/**/*")
