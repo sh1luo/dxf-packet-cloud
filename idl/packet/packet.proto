@@ -54,6 +54,27 @@ message DeletePacketResp{
   int32 code = 1;
   string msg = 2;
 }
+
+message MCloudPacket{
+  int32 id = 1;
+  string region = 2 ;
+  string name = 3 ;
+  repeated string channel = 4 ;
+  string uploader = 5 ;
+  string time = 6;
+
+  repeated UserPacket user_packets = 7;
+}
+
+message MUploadAllChannelsPacketReq{
+  MCloudPacket mcloud_packet = 1;
+}
+
+message MUploadAllChannelsPacketResp{
+  int32 code = 1;
+  string msg = 2;
+}
+
 //
 //message UpdateUserReq{
 //  int64 UserID = 1 [(api.path) = "user_id", (api.vd) = "$>0"];
@@ -85,5 +106,8 @@ service PacketService {
 //  }
   rpc DeletePacket(DeletePacketReq) returns(DeletePacketResp){
     option (api.delete) = "/v1/packet/delete/:id";
+  }
+  rpc MUploadAllChannelsPacket(MUploadAllChannelsPacketReq) returns(MUploadAllChannelsPacketResp){
+    option (api.post) = "/v1/packet/mupload";
   }
 }

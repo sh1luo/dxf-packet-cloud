@@ -164,3 +164,60 @@ func DeletePacket(ctx context.Context, c *app.RequestContext) {
 
 	c.JSON(consts.StatusOK, resp)
 }
+
+// MUploadAllChannelsPacket .
+// @router /v1/packet/mupload [POST]
+func MUploadAllChannelsPacket(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req packet.MUploadAllChannelsPacketReq
+	err = c.BindAndValidate(&req)
+	if err != nil || req.McloudPacket == nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+
+	resp := new(packet.MUploadAllChannelsPacketResp)
+
+	writeLock.Lock()
+	defer writeLock.Unlock()
+
+	packets, err := model.ReadPackets()
+	if err != nil {
+		log.Println("[UploadPacket] read packets error", err)
+		c.JSON(consts.StatusInternalServerError, resp)
+		return
+	}
+
+	for _, channel := range req.McloudPacket.Channel {
+		inserted := &packet.CloudPacket{
+			Id:          0,
+			Region:      req.McloudPacket.Region,
+			Name:        req.McloudPacket.Name,
+			Channel:     channel,
+			Uploader:    req.McloudPacket.Uploader,
+			Time:        req.McloudPacket.Time,
+			UserPackets: req.McloudPacket.UserPackets,
+		}
+
+		if len(packets) > 0 {
+			inserted.Id = packets[len(packets)-1].Id + 1
+		} else {
+			inserted.Id = 1
+		}
+		packets = append(packets, inserted)
+	}
+
+	err = model.SavePackets(packets)
+
+	if err != nil {
+		resp.Code = 501
+		resp.Msg = "上传失败"
+		c.JSON(consts.StatusOK, resp)
+		return
+	}
+
+	resp.Code = 200
+	resp.Msg = "上传成功"
+
+	c.JSON(consts.StatusOK, resp)
+}

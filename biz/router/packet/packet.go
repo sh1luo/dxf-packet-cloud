@@ -22,6 +22,7 @@ func Register(r *server.Hertz) {
 		{
 			_packet := _v1.Group("/packet", _packetMw()...)
 			_packet.GET("/get", append(_getpacketMw(), packet.GetPacket)...)
+			_packet.POST("/mupload", append(_mupload_llchannelspacketMw(), packet.MUploadAllChannelsPacket)...)
 			_packet.POST("/upload", append(_uploadpacketMw(), packet.UploadPacket)...)
 			{
 				_delete := _packet.Group("/delete", _deleteMw()...)
