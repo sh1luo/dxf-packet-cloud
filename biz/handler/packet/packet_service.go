@@ -188,10 +188,22 @@ func MUploadAllChannelsPacket(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	for _, channel := range req.McloudPacket.Channel {
+	m := map[int]string{
+		0: "跨1",
+		1: "跨2",
+		2: "跨3A",
+		3: "跨3B",
+		4: "跨4",
+		5: "跨5",
+		6: "跨6",
+		7: "跨7",
+		8: "跨8",
+	}
+
+	for idx, channel := range req.McloudPacket.Channel {
 		inserted := &packet.CloudPacket{
 			Id:          0,
-			Region:      req.McloudPacket.Region,
+			Region:      m[idx],
 			Name:        req.McloudPacket.Name,
 			Channel:     channel,
 			Uploader:    req.McloudPacket.Uploader,
