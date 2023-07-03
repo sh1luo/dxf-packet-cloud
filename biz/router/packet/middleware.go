@@ -75,3 +75,13 @@ func _mupload_llchannelspacketMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }
+
+func _getMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _getpacketbyidMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}

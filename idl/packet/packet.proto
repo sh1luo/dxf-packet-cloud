@@ -46,6 +46,19 @@ message GetPacketResp{
   repeated CloudPacket cloud_packets = 3;
 }
 
+message GetPacketByIDReq{
+  string time = 1;
+  string username = 2;
+  int32 id = 3;
+}
+
+message GetPacketByIDResp{
+  int32 code = 1;
+  string msg = 2;
+  //repeated UserPacket user_packets = 3;
+  string user_packets = 3;
+}
+
 message DeletePacketReq{
   int32 id = 1;
 }
@@ -100,6 +113,9 @@ service PacketService {
   }
   rpc GetPacket(GetPacketReq) returns(GetPacketResp){
     option (api.get) = "/v1/packet/get";
+  }
+  rpc GetPacketByID(GetPacketByIDReq) returns(GetPacketByIDResp){
+    option (api.get) = "/v1/packet/get/:id";
   }
 //  rpc UpdateUserResponse(UpdateUserReq) returns(UpdateUserResp){
 //    option (api.post) = "/v1/user/update/:user_id";
