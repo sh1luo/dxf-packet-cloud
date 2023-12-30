@@ -14,12 +14,12 @@ import (
 
 func main() {
 	h := server.Default(
-		server.WithHostPorts(":6666"),
+		server.WithHostPorts(":8080"),
 	)
 
 	h.LoadHTMLGlob("html/**/*")
 
-	autoSave()
+	//autoSave()
 
 	register(h)
 	h.Spin()
@@ -29,7 +29,7 @@ func autoSave() {
 	c := cron.New()
 	//c.AddFunc("6 6 * * 4", func() {
 	c.AddFunc("6 6 * * 4", func() {
-		filename := time.Now().Format("20060102-15-04-saved")
+		filename := time.Now().Format("20060102-15-04")
 		packets, err := model.ReadPackets()
 		if err != nil {
 			log.Println("[ReadPackets] read packets error:", err)

@@ -11,32 +11,15 @@
 
 <h4 align="center">云包列表</h4>
 
-<button onclick="makePostRequest()">删除这行云包</button>
+<button onclick="makePostRequest()">删除这些云包</button>
 
-<script>
-    function makePostRequest() {
-        // 获取编辑框中的内容
-        const name = document.getElementById("name").value;
 
-        // 创建 POST 请求
-        const xhr = new XMLHttpRequest();
-        xhr.open("DELETE", "/v1/packet/delete/"+name);
-        xhr.setRequestHeader("Content-Type", "application/json");
-        xhr.onload = function() {
-            if (xhr.status === 200) {
-                alert(xhr.responseText);
-                location.reload()
-            } else {
-                alert("Request failed.  Returned status of " + xhr.status);
-            }
-        };
-        xhr.send(JSON.stringify({
-            id: parseInt(name),
-        }));
-    }
-</script>
+<input type="number" id="from" placeholder="想删除的封包编号开始">
+<input type="number" id="to" placeholder="想删除的封包编号结束">
 
-<input type="text" id="name" placeholder="想删除的封包编号">
+<br>
+
+<button onclick="clearPackets()">重置云包</button>
 
 <br>
 
@@ -53,4 +36,57 @@
 {{ end }}
 </body>
 </html>
+
+<script>
+    function makePostRequest() {
+        // 获取编辑框中的内容
+        const from = parseInt(document.getElementById("from").value);
+        const to = parseInt(document.getElementById("to").value);
+
+        // 创建 DELETE 请求
+        fetch(`/v1/packet/delete/1`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                from: from,
+                to: to
+            }),
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        alert("删除成功")
+        location.reload()
+    }
+
+    function clearPackets() {
+        // 创建 DELETE 请求
+        fetch(`/v1/packet/delete/1`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                from: 1,
+                to: 200
+            }),
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        alert("清除所有封包成功")
+        location.reload()
+    }
+</script>
+
 {{ end }}
