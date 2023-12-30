@@ -11,15 +11,11 @@
 
 <h4 align="center">云包列表</h4>
 
-<button onclick="makePostRequest()">删除这些云包</button>
+<button onclick="delRange()">删除这些云包</button>
 
 
 <input type="number" id="from" placeholder="想删除的封包编号开始">
 <input type="number" id="to" placeholder="想删除的封包编号结束">
-
-<br>
-
-<button onclick="clearPackets()">重置云包</button>
 
 <br>
 
@@ -38,11 +34,17 @@
 </html>
 
 <script>
-    function makePostRequest() {
+    function delRange() {
         // 获取编辑框中的内容
         const from = parseInt(document.getElementById("from").value);
         const to = parseInt(document.getElementById("to").value);
 
+        deletePackets(from, to)
+        alert("删除成功")
+        location.reload()
+    }
+
+    function deletePackets(from, to) {
         // 创建 DELETE 请求
         fetch(`/v1/packet/delete/1`, {
             method: 'DELETE',
@@ -61,31 +63,6 @@
             .catch(error => {
                 console.error('Error:', error);
             });
-        alert("删除成功")
-        location.reload()
-    }
-
-    function clearPackets() {
-        // 创建 DELETE 请求
-        fetch(`/v1/packet/delete/1`, {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                from: 1,
-                to: 200
-            }),
-        })
-            .then(response => response.json())
-            .then(data => {
-                console.log(data);
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-        alert("清除所有封包成功")
-        location.reload()
     }
 </script>
 
