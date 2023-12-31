@@ -6,6 +6,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>SSR方式云包管理</title>
+    <style>
+        table {
+            table-layout: fixed;
+            border-collapse: collapse;
+            width: 100%;
+            overflow-y: auto; /* Enable vertical scrolling */
+            max-height: 400px; /* Set a maximum height if needed */
+        }
+
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+            word-wrap: break-word; /* Allow long words to break and wrap onto the next line */
+            /* Remove overflow and white-space properties to allow dynamic height */
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        /* Set widths for each column */
+        th:nth-child(1), td:nth-child(1) { width: 5%; }
+        th:nth-child(2), td:nth-child(2) { width: 5%; }
+        th:nth-child(3), td:nth-child(3) { width: 15%; }
+        th:nth-child(4), td:nth-child(4) { width: 10%; }
+        th:nth-child(5), td:nth-child(5) { width: 20%; }
+        th:nth-child(6), td:nth-child(6) { width: 15%; }
+        th:nth-child(7), td:nth-child(7) { width: 20%; }
+    </style>
+
+
 </head>
 <body>
 
@@ -13,39 +45,48 @@
 
 <button onclick="delRange()">删除这些云包</button>
 
-
 <input type="number" id="from" placeholder="想删除的封包编号开始">
 <input type="number" id="to" placeholder="想删除的封包编号结束">
 
-<br>
-
-{{ range $i, $v := .packets }}
-<span id="idd">{{ $v.Id }}</span>
-<span>{{ $v.Region }}</span>
-<span>{{ $v.Name }}</span>
-<span>内容暂时无法编辑</span>
-<span>{{ $v.Channel }}</span>
-<span>{{ $v.Uploader }}</span>
-<span>{{ $v.Time }}</span>
-<br>
-
-{{ end }}
-</body>
-</html>
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Region</th>
+        <th>Name</th>
+        <th>内容</th>
+        <th>Channel</th>
+        <th>Uploader</th>
+        <th>Time</th>
+    </tr>
+    {{ range .packets }}
+    <tr>
+        <td>{{ .Id }}</td>
+        <td>{{ .Region }}</td>
+        <td>{{ .Name }}</td>
+        <td>内容暂时无法编辑</td>
+        <td>{{ .Channel }}</td>
+        <td>{{ .Uploader }}</td>
+        <td>{{ .Time }}</td>
+    </tr>
+    {{ end }}
+</table>
 
 <script>
     function delRange() {
-        // 获取编辑框中的内容
         const from = parseInt(document.getElementById("from").value);
         const to = parseInt(document.getElementById("to").value);
 
-        deletePackets(from, to)
-        alert("删除成功")
-        location.reload()
+        if (isNaN(from) || isNaN(to)) {
+            alert("请输入有效的数字。");
+            return;
+        }
+
+        deletePackets(from, to);
+        alert("删除成功");
+        location.reload();
     }
 
     function deletePackets(from, to) {
-        // 创建 DELETE 请求
         fetch(`/v1/packet/delete/1`, {
             method: 'DELETE',
             headers: {
@@ -53,7 +94,7 @@
             },
             body: JSON.stringify({
                 from: from,
-                to: to
+                to: to,
             }),
         })
             .then(response => response.json())
@@ -65,5 +106,8 @@
             });
     }
 </script>
+
+</body>
+</html>
 
 {{ end }}
