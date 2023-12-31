@@ -17,7 +17,7 @@ func main() {
 		server.WithHostPorts(":8080"),
 	)
 
-	h.LoadHTMLGlob("html/**/*")
+	h.LoadHTMLGlob("html/packet/*")
 
 	//autoSave()
 
