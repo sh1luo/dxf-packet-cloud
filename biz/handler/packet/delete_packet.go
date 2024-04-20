@@ -2,12 +2,13 @@ package packet
 
 import (
 	"context"
-	"fmt"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 	"log"
-	"packet_cloud/biz/model"
+	"net/http"
 	"packet_cloud/biz/model/hertz/packet"
+	"packet_cloud/service/readwriter"
+	"slices"
 )
 
 // DeletePacket .
@@ -22,50 +23,38 @@ func DeletePacket(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	//log.Println("Delete, id=", req.GetId())
+	var (
+		resp = new(packet.DeletePacketResp)
+	)
 
-	resp := new(packet.DeletePacketResp)
+	rw := readwriter.NewReadWriter(readwriter.LFS)
+	if rw == nil {
+		c.JSON(http.StatusInternalServerError, nil)
+		return
+	}
 
-	writeLock.Lock()
-	defer writeLock.Unlock()
-
-	deletedID := make([]int32, 0)
-
-	packets, err := model.ReadPackets()
+	packets, err := rw.ReadPacket()
 	if err != nil {
 		log.Println("[DeletePacket] read file error:", err)
-		resp.Code = 501
-		resp.Msg = "删除失败，读数据包失败"
-		c.JSON(consts.StatusOK, resp)
+		c.JSON(consts.StatusInternalServerError, err)
 		return
 	}
 
-	notDeletedPackets := make([]*packet.CloudPacket, 0)
-	for idx, p := range packets {
-		if p.Id >= req.GetFrom() && p.Id <= req.GetTo() {
-			deletedID = append(deletedID, p.Id)
-		} else {
-			notDeletedPackets = append(notDeletedPackets, packets[idx])
+	remaining := slices.DeleteFunc(packets, func(packet *packet.CloudPacket) bool {
+		if packet.Id >= req.GetFrom() && packet.Id <= req.GetTo() {
+			return true
 		}
-	}
+		return false
+	})
 
-	if len(deletedID) > 0 {
-		resp.Code = 200
-		resp.Msg = fmt.Sprintf("删除成功: %v", deletedID)
-		c.JSON(consts.StatusOK, resp)
-
-		err = model.SavePackets(notDeletedPackets)
-		if err != nil {
-			resp.Code = 501
-			resp.Msg = "删除后保存失败"
-			c.JSON(consts.StatusOK, resp)
-		}
-
+	err = rw.SavePacket(remaining)
+	if err != nil {
+		c.JSON(consts.StatusInternalServerError, err)
 		return
 	}
 
-	resp.Code = -1
-	resp.Msg = fmt.Sprintf("未找到删除数据，from = %d, to = %d", req.GetFrom(), req.GetTo())
+	resp.Code = 0
+	resp.Msg = "删除成功"
 
 	c.JSON(consts.StatusOK, resp)
 }

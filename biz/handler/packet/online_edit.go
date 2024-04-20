@@ -6,13 +6,20 @@ import (
 	"github.com/cloudwego/hertz/pkg/common/utils"
 	"log"
 	"net/http"
-	"packet_cloud/biz/model"
+	"packet_cloud/service/readwriter"
 )
 
 // OnlineEdit .
 // @router /edit [GET]
 func OnlineEdit(ctx context.Context, c *app.RequestContext) {
-	packets, err := model.ReadPackets()
+
+	rw := readwriter.NewReadWriter(readwriter.LFS)
+	if rw == nil {
+		c.JSON(http.StatusInternalServerError, nil)
+		return
+	}
+
+	packets, err := rw.ReadPacket()
 	if err != nil {
 		log.Println("[OnlineEdit] read file error", err)
 		return

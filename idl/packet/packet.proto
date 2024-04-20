@@ -35,12 +35,12 @@ message UploadPacketResp{
   string msg = 2;
 }
 
-message GetPacketReq{
+message ListPacketReq{
   string time = 1;
   string username = 2;
 }
 
-message GetPacketResp{
+message ListPacketResp{
   int32 code = 1;
   string msg = 2;
   repeated CloudPacket cloud_packets = 3;
@@ -112,8 +112,8 @@ service PacketService {
   rpc UploadPacket(UploadPacketReq) returns(UploadPacketResp) {
     option (api.post) = "/v1/packet/upload";
   }
-  rpc GetPacket(GetPacketReq) returns(GetPacketResp){
-    option (api.get) = "/v1/packet/get";
+  rpc ListPacket(ListPacketReq) returns(ListPacketResp){
+    option (api.get) = "/v1/packet/list";
   }
   rpc GetPacketByID(GetPacketByIDReq) returns(GetPacketByIDResp){
     option (api.get) = "/v1/packet/get/:id";
@@ -122,7 +122,7 @@ service PacketService {
 //    option (api.post) = "/v1/user/update/:user_id";
 //  }
   rpc DeletePacket(DeletePacketReq) returns(DeletePacketResp){
-    option (api.delete) = "/v1/packet/delete/:id";
+    option (api.delete) = "/v1/packet/delete";
   }
   rpc MUploadAllChannelsPacket(MUploadAllChannelsPacketReq) returns(MUploadAllChannelsPacketResp){
     option (api.post) = "/v1/packet/mupload";
