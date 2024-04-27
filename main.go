@@ -19,6 +19,7 @@ func main() {
 
 	h.LoadHTMLGlob("html/packet/*")
 
+	h.StaticFile("favicon.ico", "./html/packet/favicon.ico")
 	//autoSave()
 
 	register(h)
