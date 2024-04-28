@@ -157,7 +157,7 @@
 
     function deletePackets(from, to) {
         if (confirm("Are you sure you want to delete selected packets?")) {
-            fetch(`/v1/packet/delete/1`, {
+            fetch(`/v1/packet/delete`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',

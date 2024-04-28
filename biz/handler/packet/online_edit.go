@@ -12,14 +12,7 @@ import (
 // OnlineEdit .
 // @router /edit [GET]
 func OnlineEdit(ctx context.Context, c *app.RequestContext) {
-
-	rw := readwriter.NewReadWriter(readwriter.LFS)
-	if rw == nil {
-		c.JSON(http.StatusInternalServerError, nil)
-		return
-	}
-
-	packets, err := rw.ReadPacket()
+	packets, err := readwriter.ReadPacket(readwriter.LFS)
 	if err != nil {
 		log.Println("[OnlineEdit] read file error", err)
 		return
