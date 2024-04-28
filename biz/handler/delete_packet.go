@@ -8,10 +8,8 @@ import (
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 	"log"
-	"packet_cloud/service/readwriter"
-	"slices"
-
 	packet "packet_cloud/biz/model/hertz/packet"
+	"packet_cloud/service/readwriter"
 )
 
 // DeletePacket .
@@ -37,13 +35,14 @@ func DeletePacket(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	remaining := slices.DeleteFunc(packets, func(packet *packet.CloudPacket) bool {
-		if packet.Id >= req.GetFrom() && packet.Id <= req.GetTo() {
-			deletedIDs = append(deletedIDs, packet.Id)
-			return true
+	remaining := make([]*packet.CloudPacket, 0)
+	for _, p := range packets {
+		if p.Id >= req.GetFrom() && p.Id <= req.GetTo() {
+			deletedIDs = append(deletedIDs, p.Id)
+		} else {
+			remaining = append(remaining, p)
 		}
-		return false
-	})
+	}
 
 	err = readwriter.SavePacket(remaining, readwriter.LFS)
 	if err != nil {
