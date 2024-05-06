@@ -12,35 +12,29 @@
     <style>
         body {
             font-family: 'Arial', sans-serif;
-            background-color: #f5f5f5;
+            background-color: #f8f9fa;
             margin: 0;
             padding: 0;
+            height: 100vh; /* 页面铺满屏幕 */
         }
 
         .container {
-            max-width: 1000px;
             margin: auto;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            margin-top: 50px;
         }
 
         h4 {
             text-align: center;
             color: #007bff;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
         }
 
         .btn-danger {
             background-color: #dc3545;
             color: #fff;
             border: none;
-            padding: 8px 20px;
-            border-radius: 4px;
+            padding: 10px 25px;
+            border-radius: 6px;
             cursor: pointer;
-            font-size: 16px;
             transition: background-color 0.3s;
         }
 
@@ -49,7 +43,7 @@
         }
 
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 30px;
         }
 
         label {
@@ -61,34 +55,28 @@
             table-layout: fixed;
             border-collapse: collapse;
             width: 100%;
-            margin-top: 20px;
+            margin-top: 30px;
+            background-color: #fff; /* 添加表格背景色 */
+            border: 1px solid #dee2e6; /* 添加表格边框 */
         }
 
         th, td {
-            border: 1px solid #ddd;
-            padding: 12px;
+            border: 1px solid #dee2e6;
+            padding: 15px;
             text-align: left;
+            font-size: 16px; /* 调整字体大小 */
         }
 
         th {
-            background-color: #f2f2f2;
+            background-color: #e9ecef;
             font-weight: bold;
             color: #333;
         }
 
-        .delete-btn {
-            background-color: #dc3545;
-            color: #fff;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: background-color 0.3s;
-        }
-
-        .delete-btn:hover {
-            background-color: #c82333;
+        .custom-btn {
+            height: inherit;
+            padding: 0.5rem 0.5rem;
+            font-size: 1rem;
         }
     </style>
 </head>
@@ -105,9 +93,9 @@
         <label for="to">End Packet ID</label>
         <input type="number" id="to" class="form-control" placeholder="End Packet ID">
     </div>
-    <button class="btn btn-danger" onclick="delRange()">批量删除</button>
+    <button type="submit" class="custom-btn btn-danger" onclick="delRange()">批量删除</button> <!-- 使用 Bootstrap 按钮 -->
 
-    <table class="table">
+    <table class="table table-striped table-bordered"> <!-- 添加 Bootstrap 表格样式 -->
         <thead>
         <tr>
             <th style="width: 10%;">ID</th>
@@ -121,16 +109,16 @@
         </tr>
         </thead>
         <tbody>
-        {{ range .packets }}
+        {{ range.packets }}
         <tr>
-            <td>{{ .Id }}</td>
-            <td>{{ .Region }}</td>
-            <td>{{ .Name }}</td>
+            <td>{{.Id }}</td>
+            <td>{{.Region }}</td>
+            <td>{{.Name }}</td>
             <td>暂时不可查看</td>
-            <td>{{ .Channel }}</td>
-            <td>{{ .Uploader }}</td>
-            <td>{{ .Time }}</td>
-            <td><button class="delete-btn" onclick="deletePacket({{ .Id }})">删除</button></td>
+            <td>{{.Channel }}</td>
+            <td>{{.Uploader }}</td>
+            <td>{{.Time }}</td>
+            <td><button type="submit" class="custom-btn btn-danger" onclick="deletePacket({{.Id }})">删除</button></td> <!-- 使用 Bootstrap 按钮 -->
         </tr>
         {{ end }}
         </tbody>
