@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>SSR Mode Cloud Package Management</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
     <link rel="shortcut" href="favicon.ico">
 
     <style>
@@ -19,7 +18,7 @@
         }
 
         .container {
-            margin: auto;
+            margin: auto 20px;
         }
 
         h4 {
@@ -36,6 +35,8 @@
             border-radius: 6px;
             cursor: pointer;
             transition: background-color 0.3s;
+            display: block; /* 让按钮居中 */
+            margin: auto; /* 让按钮居中 */
         }
 
         .btn-danger:hover {
@@ -44,6 +45,7 @@
 
         .form-group {
             margin-bottom: 30px;
+            text-align: center;
         }
 
         label {
@@ -55,16 +57,17 @@
             table-layout: fixed;
             border-collapse: collapse;
             width: 100%;
-            margin-top: 30px;
+            margin-top: 15px; /* 减少表格顶部间距 */
             background-color: #fff; /* 添加表格背景色 */
             border: 1px solid #dee2e6; /* 添加表格边框 */
         }
 
         th, td {
             border: 1px solid #dee2e6;
-            padding: 15px;
+            padding: 10px; /* 减少单元格内边距 */
             text-align: left;
             font-size: 16px; /* 调整字体大小 */
+            line-height: 1.5; /* 减少行高 */
         }
 
         th {
@@ -169,5 +172,4 @@
 
 </body>
 </html>
-
 {{ end }}
