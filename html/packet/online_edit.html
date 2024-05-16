@@ -14,14 +14,24 @@
             background-color: #f8f9fa;
             margin: 0;
             padding: 0;
-            height: 100vh; /* 页面铺满屏幕 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh; /* 页面铺满屏幕 */
         }
 
         .container {
-            margin: auto 20px;
+            width: 100%;
+            max-width: 1200px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            padding: 20px;
+            box-sizing: border-box;
+            margin-top: 50px;
         }
 
-        h4 {
+        h2 {
             text-align: center;
             color: #007bff;
             margin-bottom: 30px;
@@ -36,7 +46,8 @@
             cursor: pointer;
             transition: background-color 0.3s;
             display: block; /* 让按钮居中 */
-            margin: auto; /* 让按钮居中 */
+            margin: 20px auto; /* 让按钮居中 */
+            font-size: 16px;
         }
 
         .btn-danger:hover {
@@ -44,30 +55,44 @@
         }
 
         .form-group {
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             text-align: center;
         }
 
         label {
             font-weight: bold;
             color: #333;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="number"] {
+            width: calc(100% - 20px);
+            max-width: 300px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin: 0 auto;
+            display: block;
+            box-sizing: border-box;
         }
 
         table {
             table-layout: fixed;
             border-collapse: collapse;
             width: 100%;
-            margin-top: 15px; /* 减少表格顶部间距 */
-            background-color: #fff; /* 添加表格背景色 */
-            border: 1px solid #dee2e6; /* 添加表格边框 */
+            margin-top: 15px;
+            background-color: #fff;
+            border: 1px solid #dee2e6;
         }
 
         th, td {
             border: 1px solid #dee2e6;
-            padding: 10px; /* 减少单元格内边距 */
+            padding: 10px;
             text-align: left;
-            font-size: 16px; /* 调整字体大小 */
-            line-height: 1.5; /* 减少行高 */
+            font-size: 16px;
+            line-height: 1.5;
+            word-wrap: break-word; /* 单词换行 */
         }
 
         th {
@@ -76,29 +101,46 @@
             color: #333;
         }
 
+        tbody tr:nth-child(odd) {
+            background-color: #f8f9fa;
+        }
+
+        tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+
         .custom-btn {
-            height: inherit;
-            padding: 0.5rem 0.5rem;
-            font-size: 1rem;
+            padding: 8px 12px;
+            font-size: 14px;
+            border-radius: 4px;
+            border: none;
+            background-color: #dc3545;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .custom-btn:hover {
+            background-color: #c82333;
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h4><i class="fas fa-cloud"></i> Cloud Package List</h4>
+    <h2>Cloud Package List</h2>
 
     <div class="form-group">
         <label for="from">Start Packet ID</label>
-        <input type="number" id="from" class="form-control" placeholder="Start Packet ID">
+        <input type="number" id="from" placeholder="Start Packet ID">
     </div>
     <div class="form-group">
         <label for="to">End Packet ID</label>
-        <input type="number" id="to" class="form-control" placeholder="End Packet ID">
+        <input type="number" id="to" placeholder="End Packet ID">
     </div>
-    <button type="submit" class="custom-btn btn-danger" onclick="delRange()">批量删除</button> <!-- 使用 Bootstrap 按钮 -->
+    <button type="submit" class="btn-danger" onclick="delRange()">批量删除</button>
 
-    <table class="table table-striped table-bordered"> <!-- 添加 Bootstrap 表格样式 -->
+    <table>
         <thead>
         <tr>
             <th style="width: 10%;">ID</th>
@@ -112,7 +154,7 @@
         </tr>
         </thead>
         <tbody>
-        {{ range.packets }}
+        {{ range .packets }}
         <tr>
             <td>{{.Id }}</td>
             <td>{{.Region }}</td>
@@ -121,32 +163,30 @@
             <td>{{.Channel }}</td>
             <td>{{.Uploader }}</td>
             <td>{{.Time }}</td>
-            <td><button type="submit" class="custom-btn btn-danger" onclick="deletePacket({{.Id }})">删除</button></td> <!-- 使用 Bootstrap 按钮 -->
+            <td><button type="submit" class="custom-btn" onclick="deletePacket({{.Id }})">删除</button></td>
         </tr>
         {{ end }}
         </tbody>
     </table>
 </div>
 
-
 <script>
     function delRange() {
         const from = parseInt(document.getElementById("from").value);
         const to = parseInt(document.getElementById("to").value);
 
-        if (isNaN(from) || isNaN(to)) {
-            alert("Please enter valid numbers.");
-            return;
-        }
-
         deletePackets(from, to);
     }
 
     function deletePacket(id) {
-        deletePackets(id, id)
+        deletePackets(id, id);
     }
 
     function deletePackets(from, to) {
+        if (isNaN(from) || isNaN(to) || from > to || from < 0 || to < 0) {
+            alert("Please enter valid number range.");
+            return;
+        }
         if (confirm("Are you sure you want to delete selected packets?")) {
             fetch(`/v1/packet/delete`, {
                 method: 'DELETE',
